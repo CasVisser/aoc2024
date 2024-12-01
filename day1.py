@@ -19,23 +19,26 @@ part2 = None
 
 ### BEGIN SOLUTION
 
+from collections import defaultdict
+
+part1 = part2 = 0
+
 left = []
 right = []
-part1 = 0
-lines = inp.split("\n")
-for line in lines:
+for line in inp.split("\n"):
     l, r = line.split("   ")
     left.append(int(l))
     right.append(int(r))
 
 left.sort()
 right.sort()
+count = defaultdict(int)
 for l, r in zip(left, right):
     part1 += abs(l - r)
+    count[r] += 1
 
-part2 = 0
 for l in left:
-    part2 += l * right.count(l)
+    part2 += l * count[l]
 
 ### END SOLUTION
 
