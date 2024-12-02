@@ -19,22 +19,14 @@ from itertools import pairwise
 
 def safe(report, ascending, can_remove=False):
     for i, (l1, l2) in enumerate(pairwise(report)):
-        if (
-               (    ascending and (l2 - l1 <= 0 or l2 - l1 > 3))
-            or (not ascending and (l2 - l1 >= 0 or l2 - l1 < -3))
-            ):
+        if ((ascending and not 1 <= l2 - l1 <= 3) or (not ascending and not 1 <= l1 - l2 <= 3)):
             if can_remove:
-                l1_removed = list(report)
-                l1_removed.pop(i)
-                l2_removed = list(report)
-                l2_removed.pop(i + 1)
-                return safe(l1_removed, ascending) or safe(l2_removed, ascending)
+                return safe(report[:i] + report[i + 1:], ascending) or safe(report[:i + 1] + report[i + 2:], ascending)
             return False
     return True
 
-
-part1 = 0 # 463
-part2 = 0 # not 493, 522, 516, 545
+part1 = 0
+part2 = 0
 
 reports = [[int(n) for n in line.split(" ")] for line in inp.split("\n")]
 for report in reports:
