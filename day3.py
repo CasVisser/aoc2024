@@ -10,50 +10,11 @@ part2 = None
 
 ### BEGIN SOLUTION
 
-part1 = 0
-
-# while len(inp) > 3:
-#     inp = inp[inp.find("mul(") + 4:]
-#     n1 = inp[:inp.find(",")]
-#     inp = inp[inp.find(",") + 1:]
-#     if n1.isnumeric():
-#         n1 = int(n1)
-#     else:
-#         continue
-#     n2 = inp[:inp.find(")")]
-#     inp = inp[inp.find("mul("):]
-#     if n2.isnumeric():
-#         n2 = int(n2)
-#         print(f"{n1=} {n2=}")
-#         part1 += n1 * n2
-#     else:
-#         continue
-
 import re
 
-for mul in re.findall(r"mul\(\d+,\d+\)", inp):
-    n1, n2 = map(int, mul[4:-1].split(","))
-    part1 += n1 * n2
-
-# part2 = 0
-# while True:
-#     next_dont = inp.find("don't()")
-#     s = inp[:next_dont]
-#     for mul in re.findall(r"mul\(\d+,\d+\)", s):
-#         n1, n2 = map(int, mul[4:-1].split(","))
-#         print(f"{n1=} {n2=}")
-#         part2 += n1 * n2
-#     next_do = inp[next_dont:].find("do()") + 4
-#     inp = inp[next_dont + next_do:]
-#     if len(inp) < 6:
-#         break
-
-part2 = 0
-for s in re.findall(r"(?:^|do\(\))(.*?)(?:don't\(\)|$)", inp.replace("\n", "")):
-#     print(s)
-    for mul in re.findall(r"mul\(\d+,\d+\)", s):
-        n1, n2 = map(int, mul[4:-1].split(","))
-        part2 += n1 * n2
+mul = lambda s: sum(int(n1) * int(n2) for n1, n2 in re.findall(r"mul\((\d+),(\d+)\)", s))
+part1 = mul(inp) 
+part2 = sum(mul(s) for s in re.findall(r"(?:^|do\(\))(.*?)(?:don't\(\)|$)", inp, flags=re.DOTALL))
 
 ### END SOLUTION
 
