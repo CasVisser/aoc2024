@@ -19,15 +19,28 @@ f"""import aocd, sys
 
 inp = r\"\"\"\"\"\"
 
+# Get input from server if specified
 if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv[1] == "s2"):
     inp = aocd.get_data(day={day}, year={year})
+
+# Common parsing steps
+lines = inp.split("\\n")
+
+# If multiple lines of same length, try to parse as grid
+if len(lines) > 1 and len(set(map(len, lines))) == 1:
+    grid = {{complex(x, y): c for y, line in enumerate(lines)
+                             for x, c in enumerate(line)}}
 
 part1 = None
 part2 = None
 
 ### BEGIN SOLUTION
 
+from collections import defaultdict
 
+part1 = part2 = 0
+
+for line in lines:
 
 ### END SOLUTION
 
