@@ -46,60 +46,46 @@ part2 = None
 
 ### BEGIN SOLUTION
 
-from collections import defaultdict
+from collections import defaultdict, deque
+from itertools import combinations
 
 part1 = part2 = 0
-
-g = defaultdict(list)
+before = defaultdict(list)
 
 unordered = []
-rules, pagess = inp.split("\n\n")
+rules, updates = inp.split("\n\n")
 for rule in rules.split("\n"):
-    n1, n2 = rule.split("|")
-    g[n1].append(n2)
+    p1, p2 = rule.split("|")
+    before[p1].append(p2)
 
-for pages in pagess.split("\n"):
-    ps = pages.split(",")
+for update in updates.split("\n"):
+    pages = update.split(",")
     ordered = True
-    for i, p1 in enumerate(ps):
-        for p2 in ps[i + 1:]:
-            if p1 in g[p2]:
-                ordered = False
-                unordered.append(ps)
-                break
-        if not ordered:
+    for p1, p2 in combinations(pages, 2):
+        if p1 in before[p2]:
+            ordered = False
+            unordered.append(pages)
             break
     else:
-        part1 += int(ps[len(ps) // 2])
+        part1 += int(pages[len(pages) // 2])
 
-import sys
-sys.setrecursionlimit(10000000)
-from collections import deque
-for ps in unordered:
+def visit(v, seen, topological):
+    if v in seen:
+        return
+    for neighbor in before[v]:
+        if neighbor not in pages:
+            continue
+        visit(neighbor, seen, topological)
+    seen.add(v)
+    topological.appendleft(v)
+
+for pages in unordered:
     seen = set()
     topological = deque()
-    def visit(v):
-        if v in seen:
-            return
-        for neighbor in g[v]:
-            if neighbor not in ps:
-                continue
-            visit(neighbor)
-        seen.add(v)
-        topological.appendleft(v)
-
-    for p in ps:
-        if p in seen:
-            continue
-        visit(p)
-    ps.sort(key=lambda p: topological.index(p))
-    part2 += int(ps[len(ps) // 2])
-
-
-
-
-
-
+    for p in pages:
+        visit(p, seen, topological)
+    pages.sort(key=lambda p: topological.index(p))
+    part2 += int(pages[len(pages) // 2])
 
 ### END SOLUTION
 
