@@ -16,21 +16,19 @@ if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv
 
 ### BEGIN SOLUTION
 
-def get_possible_results(nums):
-    if len(nums) == 1:
-        return {nums[0]}
-    rec = get_possible_results(nums[:-1])
-    return {nums[-1] + r for r in rec} | {nums[-1] * r for r in rec} | {int(str(r) + str(nums[-1])) for r in rec}
+from functools import reduce
+
+l1 = lambda rs, n: {r + n for r in rs} | {r * n for r in rs}
+l2 = lambda rs, n: {r + n for r in rs} | {r * n for r in rs} | {int(str(r) + str(n)) for r in rs}
 
 part1 = part2 = 0
 for line in inp.split("\n"):
     r, nums = line.split(": ")
     nums = list(map(int, nums.split(" ")))
-    rs = get_possible_results(nums)
-    print(rs)
-    if int(r) in rs:
+    if int(r) in reduce(l1, nums[1:], {nums[0]}):
+        part1 += int(r)
+    if int(r) in reduce(l2, nums[1:], {nums[0]}):
         part2 += int(r)
-
 
 ### END SOLUTION
 
