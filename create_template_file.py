@@ -27,15 +27,7 @@ if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv
 
 from collections import defaultdict
 
-# Common parsing steps
-lines = inp.split("\\n")
-# If multiple lines of same length, try to parse as grid
-if len(lines) > 1 and len(set(map(len, lines))) == 1:
-    grid = {{complex(x, y): c for y, line in enumerate(lines)
-                             for x, c in enumerate(line)}}
-
 part1 = part2 = 0
-for line in lines:
 
 ### END SOLUTION
 
