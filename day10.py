@@ -15,42 +15,23 @@ if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv
 
 ### BEGIN SOLUTION
 
-from collections import defaultdict
-from itertools import product
-
 part1 = part2 = 0
 grid = {complex(x, y): int(c) for y, line in enumerate(inp.split("\n"))
                          for x, c in enumerate(line)}
-starts = set()
-for xy, v in grid.items():
-    if v != 0:
-        continue
-    starts.add(xy)
-    q = {xy}
-    seen = set()
-    tops = set()
-    while q:
-        xy = q.pop()
-        seen.add(xy)
-        neighbors = {xy + d for d in [1, -1, 1j, -1j] 
-                     if xy + d in grid and grid[xy + d] - grid[xy] == 1
-                     and xy + d not in seen}
-        tops |= {n for n in neighbors if grid[n] == 9}
-        q |= neighbors
-    part1 += len(tops)
 
-def find_top(xy, seen):
+def find_tops(xy, seen):
     neighbors = {xy + d for d in [1, -1, 1j, -1j] 
-                 if xy + d in grid and grid[xy + d] - grid[xy] == 1
-                 and xy + d not in seen}
-    res = len({n for n in neighbors if grid[n] == 9})
-    for n in neighbors:
-        if grid[n] != 9:
-            res += find_top(n, seen.copy())
+                 if xy + d in grid and grid[xy + d] - grid[xy] == 1 and xy + d not in seen}
+    res = ([n for n in neighbors if grid[n] == 9] +
+           [x for xs in [find_tops(n, seen) for n in neighbors if grid[n] != 9] for x in xs])
     return res
 
-for xy in starts:
-    part2 += find_top(xy, set())
+for xy, h in grid.items():
+    if h != 0:
+        continue
+    tops = find_tops(xy, set())
+    part1 += len(set(tops))
+    part2 += len(tops)
 
 ### END SOLUTION
 
