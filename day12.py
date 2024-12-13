@@ -22,33 +22,31 @@ from collections import defaultdict
 part1 = part2 = 0
 grid = {complex(x, y): c for y, line in enumerate(inp.split("\n"))
                          for x, c in enumerate(line)}
+
 q = set(grid.keys())
+areas = []
 while q:
-    cur = q.pop()
-    t = grid[cur]
-    area = {cur}
-    area_size = 1
-    while True:
-        area |= {xy + d for d in [1, -1, 1j, -1j] for xy in area 
-                 if xy + d in grid and grid[xy + d] == t}
-        if len(area) <= area_size:
-            break
-        area_size = len(area)
+    q2 = {q.pop()}
+    area = q2.copy()
+    while q2: # floodfill area
+        q2 = {xy + d for d in [1, -1, 1j, -1j] for xy in q2 
+              if xy + d in grid and xy + d not in area and grid[xy + d] == grid[xy]}
+        area |= q2
     q -= area
-    perimeter = [xy + d for d in [1, -1, 1j, -1j] for xy in area if xy + d not in area]
-    part1 += len(area) * len(perimeter)
+    areas.append(area)
+
+for area in areas:
+    part1 += len(area) * len([xy + d for d in [1, -1, 1j, -1j] for xy in area if xy + d not in area])
     sides = 0
     for d in [1, -1, 1j, -1j]:
-        per = {xy + d for xy in area if xy + d not in area}
-        while per:
+        perimeter = {xy + d for xy in area if xy + d not in area}
+        while perimeter:
             sides += 1
-            q2 = {per.pop()}
-            while q2:
-                q2 = {xy + d for d in [d*1j, -d*1j] for xy in q2 if xy + d in per}
-                per -= q2
+            q = {perimeter.pop()}
+            while q: # floodfill perimeter
+                q = {xy + d for d in [d*1j, -d*1j] for xy in q if xy + d in per}
+                perimeter -= q
     part2 += len(area) * sides
-            
-
 
 ### END SOLUTION
 

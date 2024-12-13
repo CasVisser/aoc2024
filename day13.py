@@ -36,9 +36,7 @@ for machine in inp.split("\n\n"):
             machine, 
             flags=re.DOTALL)[0])
     part1 += solve(ax, ay, bx, by, gx, gy)
-    gx += 10000000000000
-    gy += 10000000000000
-    part2 += solve(ax, ay, bx, by, gx, gy)
+    part2 += solve(ax, ay, bx, by, gx + 10000000000000, gy + 10000000000000)
 
 ### END SOLUTION
 
