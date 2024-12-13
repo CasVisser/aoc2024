@@ -24,22 +24,21 @@ if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv
 
 import re
 
+def solve(ax, ay, bx, by, gx, gy):
+    a = (gx - (bx * gy) / by) / (ax - (ay * bx) / by)
+    b = (gy - a * ay) / by
+    return 3 * round(a) + round(b) if abs(round(a) - a) < .01 and abs(round(b) - b) < .01 else 0
+
 part1 = part2 = 0
 for machine in inp.split("\n\n"):
     ax, ay, bx, by, gx, gy = map(int, re.findall(
             r".*A: X\+(\d+), Y\+(\d+).*B: X\+(\d+), Y\+(\d+).*X=(\d+), Y=(\d+)", 
             machine, 
             flags=re.DOTALL)[0])
-    a = (gx - (bx * gy) / by) / (ax - (ay * bx) / by)
-    b = (gy - a * ay) / by
-    if abs(round(a) - a) < .01 and abs(round(b) - b) < .01:
-        part1 += int(3 * round(a) + round(b))
+    part1 += solve(ax, ay, bx, by, gx, gy)
     gx += 10000000000000
     gy += 10000000000000
-    a = (gx - (bx * gy) / by) / (ax - (ay * bx) / by)
-    b = (gy - a * ay) / by
-    if abs(round(a) - a) < .01 and abs(round(b) - b) < .01:
-        part2 += int(3 * round(a) + round(b))
+    part2 += solve(ax, ay, bx, by, gx, gy)
 
 ### END SOLUTION
 
