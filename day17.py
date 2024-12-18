@@ -22,30 +22,34 @@ def combo(op, A, B, C):
     return [A, B, C][op - 4]
 
 A, B, C, *prog = map(int, re.findall(r"\d+", inp))
-out = []
-pc = 0
-while pc < len(prog) - 1:
-    ins, op = prog[pc : pc + 2]
-    if ins == 0: # adv
-        A = A // 2**(combo(op, A, B, C))
-    elif ins == 1: # blx
-        B ^= op
-    elif ins == 2: # bst
-        B = combo(op, A, B, C) & 7
-    elif ins == 3 and A != 0: # jnz
-        pc = op
-        continue
-    elif ins == 4: # bxc
-        B = B ^ C
-    elif ins == 5: # out
-        out.append(combo(op, A, B, C) & 7)
-    elif ins == 6: # bdv
-        B = A // 2**(combo(op, A, B, C))
-    elif ins == 7: # cdv
-        C = A // 2**(combo(op, A, B, C))
-    pc += 2
-
-part1 = ",".join(map(str, out))
+s = 20534812061143
+for start_A in range(s * 8, (s + 1) * 8):
+    A = start_A
+    out = []
+    pc = 0
+    while pc < len(prog) - 1:
+        ins, op = prog[pc : pc + 2]
+        if ins == 0: # adv
+            A = A // 2**(combo(op, A, B, C))
+        elif ins == 1: # blx
+            B ^= op
+        elif ins == 2: # bst
+            B = combo(op, A, B, C) & 7
+        elif ins == 3 and A != 0: # jnz
+            pc = op
+            continue
+        elif ins == 4: # bxc
+            B = B ^ C
+        elif ins == 5: # out
+            out.append(combo(op, A, B, C) & 7)
+        elif ins == 6: # bdv
+            B = A // 2**(combo(op, A, B, C))
+        elif ins == 7: # cdv
+            C = A // 2**(combo(op, A, B, C))
+        pc += 2
+    print(f"{start_A}: {','.join(map(str, out))}")
+    if out == prog:
+        part2 = start_A
 
 ### END SOLUTION
 
