@@ -17,13 +17,7 @@ if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv
 
 ### BEGIN SOLUTION
 
-from collections import defaultdict
 from functools import cache
-
-part1 = part2 = 0
-
-towels, patterns = inp.split("\n\n")
-towels = [(t, len(t)) for t in towels.split(", ")]
 
 @cache
 def possible(pattern, start=0):
@@ -35,7 +29,12 @@ def possible(pattern, start=0):
             options += possible(pattern, start=start + l)
     return options
 
+towels, patterns = inp.split("\n\n")
+towels = [(t, len(t)) for t in towels.split(", ")]
+
+part1 = part2 = 0
 for pattern in patterns.split("\n"):
+    part1 += int(possible(pattern) > 0)
     part2 += possible(pattern)
 
 ### END SOLUTION
