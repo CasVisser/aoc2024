@@ -23,62 +23,33 @@ if len(sys.argv) > 1 and (sys.argv[1] == "gd" or sys.argv[1] == "s1" or sys.argv
 ### BEGIN SOLUTION
 
 from collections import defaultdict
+from heapq import heappop, heappush
 
-part1 = part2 = 0
-w = inp.find("\n")
-h = inp.count("\n") + 1
-grid = {complex(x, y): c for y, line in enumerate(inp.split("\n"))
-                         for x, c in enumerate(line)}
-graph = defaultdict(set)
-for y, line in enumerate(inp.split("\n")):
-    for x, c in enumerate(line):
-        if c == "#":
-            continue
-        if c == "S":
-            start = complex(x, y)
-        if c == "E":
-            goal = complex(x, y)
-        graph[complex(x, y)] = {complex(x, y) + d for d in [1, -1j, -1, 1j] if complex(x, y) + d in grid}
+w = inp.find("\n"); h = inp.count("\n") + 1
+start = complex(inp.find("S") % (w + 1), inp.find("S") // (w + 1))
+grid = {complex(x, y) for y, line in enumerate(inp.split("\n"))
+                      for x, c in enumerate(line) if c != "#"}
+graph = {xy: {xy + d for d in [1, -1j, -1, 1j] if xy in grid and xy + d in grid} for xy in grid}
 
 min_dist = defaultdict(lambda: w * h)
 min_dist[start] = 0
 q = [(0, start)]
 while q:
-    dist, pos = q.pop()
+    dist, pos = heappop(q)
     for n in graph[pos]:
         if dist + 1 < min_dist[n]:
             min_dist[n] = dist + 1
-            q.append((dist + 1, n))
+            heappush(q, (dist + 1, n))
 
-skips = []
-for y, line in enumerate(inp.split("\n")):
-    for x, c in enumerate(line):
-        if c == "#":
-            continue
-        cheats = {complex(x, y) + 2 * d for d in [1, -1j, -1, 1j]}
-        for cheat in cheats:
-            if cheat not in grid or grid[cheat] == "#":
-                continue
-            skip = min_dist[cheat] - min_dist[complex(x, y)] - 2
-            if skip >= 100:
+part1 = part2 = 0
+for xy in grid:
+    cheats = {(l, xy + i + (l - abs(i)) * dy) for dy in (1j, -1j) 
+              for l in range(2, 21) for i in range(-l, l + 1) if xy + i + (l - abs(i)) * dy in grid}
+    for l, cheat in cheats:
+        if min_dist[cheat] - min_dist[xy] - l >= 100:
+            if l == 2:
                 part1 += 1
-
-        cheats = {complex(x, y) + i * dx + (l - i) * dy for dx in (1, -1) for dy in (1j, -1j) for l in range(2, 21) for i in range(l + 1)}
-        for cheat in cheats:
-            if cheat not in grid or grid[cheat] == "#":
-                continue
-            skip = min_dist[cheat] - min_dist[complex(x, y)] - int(abs(cheat.real - x) + abs(cheat.imag - y))
-            # if skip == 74:
-                # print(f"{x=} {y=} {cheat=} {min_dist[complex(x, y)]=} {min_dist[cheat]=} {grid[cheat]=}")
-            if skip >= 100:
-                skips.append(skip)
-                part2 += 1
-
-from collections import Counter
-t = Counter(skips)
-for l, c in sorted(t.items()):
-    print(f"{c} cheats save {l}")
-
+            part2 += 1
 
 ### END SOLUTION
 
